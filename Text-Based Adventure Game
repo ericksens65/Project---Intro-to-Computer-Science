@@ -16,29 +16,33 @@ def game_start():
   p_gold = 0
   p_turns = 0
   p_atk = 0
+  print("This is the start of the game")
   time.sleep(1)
-  print("This is the start of the game \n(testing hp value: ", p_hp, "\n(testing gold value: ", p_gold))
+  print("\ntesting hp value: ", p_hp)
+  time.sleep(1)
+  print("testing gold value: ", p_gold)
   time.sleep(1)
 
-  testing = input("This is where we can test what we have created, type in 'death' or 'encounter' to test what will happen).lower()
-    if testing == "death":  
-      death_test = int(input("We are going to test what happens when you die, type in 1: "))
-      if death_test == 1:
-        p_hp = 0
-      else:
-        print("error occured")
-    elif testing == "encounter":
-      p_gold += 5
-      "You defeated an enemy, you now have", p_gold, "gold.")
+  testing = input("\nThis is where we can test what we have created, type in 'death' or 'encounter' to test what will happen: ").lower()
+  if testing == "death":
+    time.sleep(1)
+    death_test = int(input("\nWe are going to test what happens when you die, type in 1: "))
+    if death_test == 1:
+      p_hp = 0
+    else:
+      print("\nerror occured")
+  elif testing == "encounter":
+    time.sleep(1)
+    p_gold += 5
+    print("\nYou defeated an enemy, you now have", p_gold, "gold. Rerun the program to continue testing")
 
   if p_hp <= 0:
+    time.sleep(1)
     player_death = input("\nYour health has been set to 0, you have been defeated, restart? Y/N: ").upper()
     if player_death == "Y":
-        print("Restarting...")
+        print("\nRestarting...")
         game_start()
     elif player_death == "N":
-        print("Game over")
+        print("\nGame over")
 
 game_start() #since the start function is never called, this will always need to be the last piece of the code, do not add anything under it
-
-
