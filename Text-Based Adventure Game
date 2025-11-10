@@ -1,15 +1,36 @@
-player_hp = 100
-player_gold = 0
-player_turns = 0
-player_atk = 0
-#core values set to 0 to initiate game start
+p_hp = 0
+p_gold = 0
+p_turns = 0
+p_atk = 0
 
+import time
+  #this will allow us to create a smoother visual experience
 def game_start():
-  global player_hp
-  player_hp += 5 
+#the entire game will take place within the function, we will only recall it if the player wants to restart
+  time.sleep(1)
+  global p_hp, p_gold, p_turns, p_atk #using the global command helps us manipulate variables outside of the function 
+  p_hp += 100
+  p_gold = 0
+  p_turns = 0
+  p_atk = 0
+  
+  print("This is the start of the game (testing hp value:)", p_hp)
 
-game_start()
+  time.sleep(1)
+  test1 = int(input("We are going to test what happens when you die, type in 1: "))
+  if test1 == 1:
+    p_hp = 0
+  else:
+    print("error occured")
 
-#testing function below
+  if p_hp <= 0:
+    player_death = input("\nYour health has been set to 0, you have been defeated, restart? Y/N: ").upper()
+    if player_death == "Y":
+        print("Restarting...")
+        game_start()
+    elif player_death == "N":
+        print("Game over")
 
-print(player_hp)
+game_start() #since the start function is never called, this will always need to be the last piece of the code, do not add anything under it
+
+
