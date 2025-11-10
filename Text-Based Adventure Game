@@ -1,1 +1,7 @@
+#core values set to 0 to initiate game start
+player_hp = 0
+player_gold = 0
+player_turns = 0
+player_attack = 0
 
+#functions will be defined below
