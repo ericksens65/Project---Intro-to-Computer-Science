@@ -3,25 +3,33 @@ p_gold = 0
 p_turns = 0
 p_atk = 0
 
-import time
-  #this will allow us to create a smoother visual experience
+import time 
+#this will allow us to create a smoother visual experience
+
 def game_start():
-#the entire game will take place within the function, we will only recall it if the player wants to restart
-  time.sleep(1)
-  global p_hp, p_gold, p_turns, p_atk #using the global command helps us manipulate variables outside of the function 
+#the entire game will take place within this function, we will only recall it if the player wants to restart
+
+  global p_hp, p_gold, p_turns, p_atk 
+#using the global command helps us manipulate variables outside of the function (has to be done this way otherwise we get an undefined error)
+
   p_hp += 100
   p_gold = 0
   p_turns = 0
   p_atk = 0
-  
-  print("This is the start of the game (testing hp value:)", p_hp)
-
   time.sleep(1)
-  test1 = int(input("We are going to test what happens when you die, type in 1: "))
-  if test1 == 1:
-    p_hp = 0
-  else:
-    print("error occured")
+  print("This is the start of the game \n(testing hp value: ", p_hp, "\n(testing gold value: ", p_gold))
+  time.sleep(1)
+
+  testing = input("This is where we can test what we have created, type in 'death' or 'encounter').lower
+    if testing == "death":  
+      death_test = int(input("We are going to test what happens when you die, type in 1: "))
+      if death_test == 1:
+        p_hp = 0
+      else:
+        print("error occured")
+    elif testing == "encounter":
+      p_gold += 5
+      "You defeated an enemy, you now have", p_gold, "gold.")
 
   if p_hp <= 0:
     player_death = input("\nYour health has been set to 0, you have been defeated, restart? Y/N: ").upper()
