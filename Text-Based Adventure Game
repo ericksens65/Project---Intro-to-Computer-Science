@@ -1,4 +1,4 @@
-player_hp = 0
+player_hp = 100
 player_gold = 0
 player_turns = 0
 player_atk = 0
