@@ -20,7 +20,7 @@ def game_start():
   print("This is the start of the game \n(testing hp value: ", p_hp, "\n(testing gold value: ", p_gold))
   time.sleep(1)
 
-  testing = input("This is where we can test what we have created, type in 'death' or 'encounter').lower
+  testing = input("This is where we can test what we have created, type in 'death' or 'encounter' to test what will happen).lower()
     if testing == "death":  
       death_test = int(input("We are going to test what happens when you die, type in 1: "))
       if death_test == 1:
