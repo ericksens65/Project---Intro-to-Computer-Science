@@ -1,11 +1,25 @@
 import time #enables use of wait command
+import random #enables use of random command(s)
 def game_start(): #the entire game will take place within this function, we will only recall it if the player wants to restart
 
   p_hp = 100
+  p_hp_limit = 100
   p_gold = 0
   p_turns = 0
   p_atk = 0
 #more variables may be added later
+
+#------------------------------------------------------------------------------------------------------------
+#wip
+  #def healing_function():
+    #p_hp += randint(25,40)
+    #random_value = randint
+    #if p_hp >= p_hp_limit:
+      #p_hp = 100
+    #print("You gainedhealth!")
+
+  #healing_function()
+#------------------------------------------------------------------------------------------------------------
 
   print("This is the start of the game")
   time.sleep(1)
