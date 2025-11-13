@@ -23,6 +23,7 @@ def game_start():
   print("testing gold value: ", p_gold)
   time.sleep(1)
 
+#the testing outcomes below will be repurposed to the actual event once we get further through the process
   testing = input("\nThis is where we can test what we have created, type in 'death' or 'encounter' to test what will happen: ").lower()
   if testing == "death":
     time.sleep(1)
