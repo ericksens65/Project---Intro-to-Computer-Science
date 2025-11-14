@@ -10,15 +10,14 @@ def game_start(): #the entire game will take place within this function, we will
 #more variables may be added later
 
 #------------------------------------------------------------------------------------------------------------
-#wip
-  #def healing_function():
-    #p_hp += randint(25,40)
-    #random_value = randint
-    #if p_hp >= p_hp_limit:
-      #p_hp = 100
-    #print("You gainedhealth!")
+  def healing_function():
+    healing_event = randint(25,40)
+    p_hp += healing_event
+    if p_hp >= p_hp_limit:
+      p_hp = 100
+    print("You gained", healing_event, "health! You now have", p_hp, "health points.")
 
-  #healing_function()
+  healing_function()
 #------------------------------------------------------------------------------------------------------------
 
   print("This is the start of the game")
