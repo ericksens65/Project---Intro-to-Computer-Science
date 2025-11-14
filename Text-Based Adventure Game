@@ -1,21 +1,18 @@
+#------------------------------------------------------------------------------------------------------------
 import time #enables use of wait command
 import random #enables use of random command(s)
 from random import randint
 def game_start(): #the entire game will take place within this function, we will only recall it if the player wants to restart
 
   player = {'hp': 100, 'gold': 0, 'turns': 0, 'atk': 0}
-#more variables may be added later
 
 #------------------------------------------------------------------------------------------------------------
-#WIP
-  #def healing_function():
-    #healing_event = randint(25,40)
-    #p_hp += healing_event
-    #if p_hp >= p_hp_limit:
-      #p_hp = 100
-    #print("You gained", healing_event, "health! You now have", p_hp, "health points.")
-  
-  #healing_function()
+  def healing_function(player):
+    random_health = randint(25,40)
+    player['hp'] += random_health
+    if player['hp'] >= 100:
+      player['hp'] = 100
+    print("You gained", random_health, "health! You now have", player['hp'], "health points.")
 #------------------------------------------------------------------------------------------------------------
 
   print("This is the start of the game")
@@ -24,21 +21,19 @@ def game_start(): #the entire game will take place within this function, we will
   time.sleep(1)
   print("testing gold value: ", player['gold'])
   time.sleep(1)
+#------------------------------------------------------------------------------------------------------------
 
 #the testing outcomes below will be repurposed to the actual event once we get further through the process
-  testing = input("\nThis is where we can test what we have created, type in 'death' or 'encounter' to test what will happen: ").lower()
+  testing = input("\nThis is where we can test what we have created, type in 'death', 'encounter', or 'heal' to test what will happen: ").lower()
   if testing == "death":
-    time.sleep(1)
-    death_test = int(input("\nWe are going to test what happens when you die, type in 1: "))
-    if death_test == 1:
       player['hp'] = 0
-    else:
-      print("\nerror occured")
   elif testing == "encounter":
     time.sleep(1)
     player['gold'] += 5
     print("\nYou defeated an enemy, you now have", player['gold'], "gold. Rerun the program to continue testing")
-
+  elif testing == "heal":
+    healing_function(player)
+#------------------------------------------------------------------------------------------------------------
   if player['hp'] <= 0:
     time.sleep(1)
     player_death = input("\nYour health has been set to 0, you have been defeated, restart? Y/N: ").upper()
@@ -47,6 +42,6 @@ def game_start(): #the entire game will take place within this function, we will
         game_start()
     elif player_death == "N":
         print("\nGame over")
-
+#------------------------------------------------------------------------------------------------------------
 game_start() #since the start function is never called, this will always need to be the last piece of the code, do not add anything under it
 
