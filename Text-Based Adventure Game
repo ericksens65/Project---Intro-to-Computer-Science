@@ -5,7 +5,7 @@ from random import randint
 
 def game_start(): #the entire game will take place within this function, we will only recall it if the player wants to restart
 
-  player = {'hp': 100, 'gold': 0, 'turns': 0, 'atk': 0, 'score': 0}
+  player = {'hp': 90, 'gold': 10, 'turns': 0, 'atk': 0, 'score': 0}
   
   enemy_type1 = {}
   enemy_type2 = {}
@@ -25,19 +25,48 @@ def game_start(): #the entire game will take place within this function, we will
       print("\nYou have been defeated.\nYour final score:", player['score'])
       restart_occurence = input("\nRestart? Y/N: ").upper()
       if restart_occurence == "Y":
-        print("\nRestarting...")
+        print("\n\nRestarting...")
         game_start()
       elif restart_occurence == "N":
-        print("\nGame over.")
+        print("\n\nGame over.")
         quit()
       else:
-        print("\nEnter a valid input.")
-  def shop_event():
-    #i will take care of this. -E
+        print("\n\nEnter a valid input.")
+        
+  def shop_function(player):
+    while True:
+      general_shop_choice = input("\nShop:\nWould you like (H)eal yourself, increase your (A)ttack, or (E)xit?: ").upper()
+    
+      if general_shop_choice == "H":
+        
+        healing_cost = 10#arbitrary value set to change
+        print("\nYou have", player['gold'], "gold. \nWould you like to heal yourself for", healing_cost, "gold?")
+        healing_shop_choice = input("Y/N: ").upper()
+        if healing_shop_choice == "Y":
+          if player ['hp'] == 100:
+            print("Your health is already at its maximum.")#notetoself:need to figure out how to get back to the main function after this, most likely wont be a problem
+            return
+          else:
+            if player ['gold'] >= healing_cost:
+              player['gold'] -= healing_cost
+              healing_function(player)
+            else:
+              print("You do not have the necessary amount to purchase this")
+                
+      elif general_shop_choice == "A":
+        print("Hello, World!")#wip
+      elif general_shop_choice == "E":
+        print("This will become an exit")
+        break
+      else:
+        print("\n\nEnter a valid input.")
+
+      
+  def enemey_encounter(player, enemy_type1, enemytype2, enemy_type3):
     print("Hello, World!")
 
 
-
+#------------------------------------------------------------------------------------------------------------
   print("\nWelcome to TEXTBASEDADVENTUREGAME")
   time.sleep(0.25)
   print("\ntesting player healthpoints:", player['hp'])
@@ -47,7 +76,7 @@ def game_start(): #the entire game will take place within this function, we will
 #------------------------------------------------------------------------------------------------------------
 
 #the testing outcomes below will be repurposed to the actual event once we get further through the process
-  testing = input("\nThis is where we can test what we have created, type in '(D)eath', '(E)ncounter', or '(H)eal' to test what will happen: ").upper()
+  testing = input("\nThis is where we can test what we have created, type in '(D)eath', '(E)ncounter', '(H)eal', or '(S)hop to test what will happen: ").upper()
   if testing == "D":
       player['hp'] = 0
   elif testing == "E":
@@ -56,6 +85,8 @@ def game_start(): #the entire game will take place within this function, we will
     print("\nYou defeated an enemy, you now have", player['gold'], "gold. Rerun the program to continue testing")
   elif testing == "H":
     healing_function(player)
+  elif testing == "S":
+    shop_function(player)
 #------------------------------------------------------------------------------------------------------------
 
 #automatically occurs at any point when health is <= 0
