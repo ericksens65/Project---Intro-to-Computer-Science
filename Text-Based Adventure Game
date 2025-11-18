@@ -15,6 +15,7 @@ def game_start(): #the entire game will take place within this function, we will
   def healing_function():
     random_health = randint(25,40)
     player['hp'] += random_health
+    #max health/healthcap inclusion WIP-Ericksen
     if player['hp'] >= 100:
       player['hp'] = 100
     print("You gained", random_health, "health! You now have", player['hp'], "health points.")
@@ -43,7 +44,7 @@ def game_start(): #the entire game will take place within this function, we will
         healing_shop_choice = input("Y/N: ").upper()
         if healing_shop_choice == "Y":
           if player ['hp'] == 100:
-            print("Your health is already at its maximum.")#notetoself:need to figure out how to get back to the main function after this, most likely wont be a problem
+            print("Your health is already at its maximum.")
             return
           else:
             if player ['gold'] >= healing_cost:
@@ -63,6 +64,8 @@ def game_start(): #the entire game will take place within this function, we will
       
   def enemey_encounter(player, enemy_type1, enemytype2, enemy_type3):
     print("Hello, World!")
+  def random_events()
+    print("random event system")#wip -Ericksen
 
 
 #------------------------------------------------------------------------------------------------------------
