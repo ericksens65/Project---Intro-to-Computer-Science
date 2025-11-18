@@ -5,22 +5,21 @@ from random import randint
 
 def game_start(): #the entire game will take place within this function, we will only recall it if the player wants to restart
 
-  player = {'hp': 90, 'gold': 10, 'turns': 0, 'atk': 0, 'score': 0}
+  player = {'hp': 90, 'gold': 10, 'turns': 0, 'atk': 0, 'score': 0, 'healthcap': 1000}
   
   enemy_type1 = {}
   enemy_type2 = {}
   enemy_type3 = {}
 
 #------------------------------------------------------------------------------------------------------------
-  #functions defined, attributed to the player
-  def healing_function(player):
+  def healing_function():
     random_health = randint(25,40)
     player['hp'] += random_health
     if player['hp'] >= 100:
       player['hp'] = 100
     print("You gained", random_health, "health! You now have", player['hp'], "health points.")
 
-  def death_function(player):
+  def death_function():
     while True:
       print("\nYou have been defeated.\nYour final score:", player['score'])
       restart_occurence = input("\nRestart? Y/N: ").upper()
@@ -33,7 +32,7 @@ def game_start(): #the entire game will take place within this function, we will
       else:
         print("\n\nEnter a valid input.")
         
-  def shop_function(player):
+  def shop_function():
     while True:
       general_shop_choice = input("\nShop:\nWould you like (H)eal yourself, increase your (A)ttack, or (E)xit?: ").upper()
     
@@ -49,7 +48,7 @@ def game_start(): #the entire game will take place within this function, we will
           else:
             if player ['gold'] >= healing_cost:
               player['gold'] -= healing_cost
-              healing_function(player)
+              healing_function()
             else:
               print("You do not have the necessary amount to purchase this")
                 
@@ -84,14 +83,14 @@ def game_start(): #the entire game will take place within this function, we will
     player['gold'] += 5
     print("\nYou defeated an enemy, you now have", player['gold'], "gold. Rerun the program to continue testing")
   elif testing == "H":
-    healing_function(player)
+    healing_function()
   elif testing == "S":
-    shop_function(player)
+    shop_function()
 #------------------------------------------------------------------------------------------------------------
 
 #automatically occurs at any point when health is <= 0
   while True:
     if player['hp'] <= 0:
-      death_function(player)
+      death_function()
 #------------------------------------------------------------------------------------------------------------
 game_start() #since the start function is never called, this will always need to be the last piece of the code, do not add anything under it
