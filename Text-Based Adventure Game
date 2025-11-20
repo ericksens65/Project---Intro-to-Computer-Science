@@ -12,7 +12,7 @@ def game_start(): #the entire game will take place within this function, we will
   enemy_type3 = {}
 
 #------------------------------------------------------------------------------------------------------------
-  def healing_function():
+  def healing_function():#healing function
     random_health = randint(25,40)
     player['hp'] += random_health
     if player['hp'] >= player['healthcap']:
@@ -21,7 +21,7 @@ def game_start(): #the entire game will take place within this function, we will
     else: 
       print("\nYou gained", random_health, "health! \nYou now have", player['hp'], "out of", player['healthcap'], "possible health points.")
 
-  def atk_function():
+  def atk_function():#atkfunction
     random_atk = randint(25,40)
     player['atk'] += random_atk
     if player['atk'] >= player['atkcap']:
@@ -31,7 +31,7 @@ def game_start(): #the entire game will take place within this function, we will
       print("\nYou gained", random_atk, "attack! \nYou now have", player['atk'], "out of", player['atkcap'], "possible attack points.")
       
 
-  def death_function():
+  def death_function():#deathfunction
     while True:
       print("\nYou have been defeated.\nYour final score:", player['score'])
       restart_occurence = input("\nRestart? Y/N: ").upper()
@@ -44,7 +44,7 @@ def game_start(): #the entire game will take place within this function, we will
       else:
         print("\n\nEnter a valid input.")
         
-  def shop_function():
+  def shop_function():#shopfunction
     while True:
       general_shop_choice = input("\nShop:\nWould you like (H)eal yourself, increase your (A)ttack, or (E)xit?: ").upper()
     
@@ -105,8 +105,6 @@ def game_start(): #the entire game will take place within this function, we will
   print("testing player goldpoints", player['gold'])
   time.sleep(0.25)
 #------------------------------------------------------------------------------------------------------------
-
-#the testing outcomes below will be repurposed to the actual event once we get further through the process
   testing = input("\nThis is where we can test what we have created, type in '(D)eath', '(E)ncounter', '(H)eal', or '(S)hop to test what will happen: ").upper()
   if testing == "D":
       player['hp'] = 0
@@ -118,12 +116,10 @@ def game_start(): #the entire game will take place within this function, we will
     healing_function()
   elif testing == "S":
     shop_function()
-#------------------------------------------------------------------------------------------------------------
 
-#automatically occurs at any point when health is <= 0
   while True:
     if player['hp'] <= 0:
       death_function()
 #------------------------------------------------------------------------------------------------------------
-game_start() #since the start function is never called, this will always need to be the last piece of the code, do not add anything under it
+game_start() #do not add anything below this point
 
