@@ -1,26 +1,35 @@
 #------------------------------------------------------------------------------------------------------------
-import time #enables use of wait command
-import random #enables use of random command(s)
+import time 
+import random 
 from random import randint
 
 def game_start(): #the entire game will take place within this function, we will only recall it if the player wants to restart
 
-  player = {'hp': 999, 'gold': 10, 'turns': 0, 'atk': 0, 'score': 0, 'healthcap': 1000}
+  player = {'hp': 100, 'gold': 10, 'turns': 0, 'atk': 5, 'score': 0, 'healthcap': 1000, 'atkcap': 500}
   
   enemy_type1 = {}
   enemy_type2 = {}
   enemy_type3 = {}
 
 #------------------------------------------------------------------------------------------------------------
- def healing_function():
+  def healing_function():
     random_health = randint(25,40)
     player['hp'] += random_health
-    max_health_raised = player['hp']#wip
     if player['hp'] >= player['healthcap']:
       player['hp'] = player['healthcap']
       print("\nYou gained", random_health,"health!", "\nYou now have", player['hp'], "health points and can no longer raise your maximum health.")
     else: 
-      print("\nYou gained", random_health, "health! \nYou now have", player['hp'], "out of", player['healthcap'], "health points.")
+      print("\nYou gained", random_health, "health! \nYou now have", player['hp'], "out of", player['healthcap'], "possible health points.")
+
+  def atk_function():
+    random_atk = randint(25,40)
+    player['atk'] += random_atk
+    if player['atk'] >= player['atkcap']:
+      player['atk'] = player ['atkcap']
+      print("\nYou gained", random_atk, "attack! \nYou now have", player['atk'], "attack points and can no longer raise your maximum attack.")
+    else:
+      print("\nYou gained", random_atk, "attack! \nYou now have", player['atk'], "out of", player['atkcap'], "possible attack points.")
+      
 
   def death_function():
     while True:
@@ -40,7 +49,6 @@ def game_start(): #the entire game will take place within this function, we will
       general_shop_choice = input("\nShop:\nWould you like (H)eal yourself, increase your (A)ttack, or (E)xit?: ").upper()
     
       if general_shop_choice == "H":
-        
         healing_cost = 10#arbitrary value set to change
         print("\nYou have", player['gold'], "gold. \nWould you like to heal yourself for", healing_cost, "gold?")
         healing_shop_choice = input("Y/N: ").upper()
@@ -53,12 +61,30 @@ def game_start(): #the entire game will take place within this function, we will
               player['gold'] -= healing_cost
               healing_function()
             else:
-              print("You do not have the necessary amount to purchase this")
+              print("You do not have the necessary amount to purchase this. Current gold:", player['gold'])
                 
       elif general_shop_choice == "A":
-        print("Hello, World!")#wip
+        atk_cost = 10#arbitrary value set to change
+        print("\nYou have", player['gold'], "gold. \nWould you like to raise your attack for", atk_cost, "gold?")
+        atk_shop_choice = input("Y/N: ").upper()
+        if atk_shop_choice == "Y":
+            if player['atk'] == player ['atkcap']:
+                print("Your attack is already at its maximum.")
+                return
+            else:
+             if player['gold'] >= atk_cost:
+                player['gold'] -= atk_cost
+                atk_function()
+             else:
+                print("You do not have the necessary amount to purchase this. Current gold:", player['gold'])
+        elif atk_shop_choice == "N":
+            print("no")#wip
+
+
+
+        
       elif general_shop_choice == "E":
-        print("This will become an exit")
+        print("Successfully exited shop")
         break
       else:
         print("\n\nEnter a valid input.")
@@ -100,3 +126,4 @@ def game_start(): #the entire game will take place within this function, we will
       death_function()
 #------------------------------------------------------------------------------------------------------------
 game_start() #since the start function is never called, this will always need to be the last piece of the code, do not add anything under it
+
