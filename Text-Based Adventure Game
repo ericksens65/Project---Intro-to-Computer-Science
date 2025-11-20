@@ -3,16 +3,16 @@ import time
 import random 
 from random import randint
 
-def game_start(): #the entire game will take place within this function, we will only recall it if the player wants to restart
+def game_start():
 
-  player = {'hp': 100, 'gold': 10, 'turns': 0, 'atk': 5, 'score': 0, 'healthcap': 1000, 'atkcap': 500}
+  player = {'hp': 100, 'gold': 50, 'turns': 0, 'atk': 5, 'score': 0, 'healthcap': 1000, 'atkcap': 500}
   
   enemy_type1 = {}
   enemy_type2 = {}
   enemy_type3 = {}
 
 #------------------------------------------------------------------------------------------------------------
-  def healing_function():#healing function
+  def healing_function():# healing function
     random_health = randint(25,40)
     player['hp'] += random_health
     if player['hp'] >= player['healthcap']:
@@ -21,7 +21,7 @@ def game_start(): #the entire game will take place within this function, we will
     else: 
       print("\nYou gained", random_health, "health! \nYou now have", player['hp'], "out of", player['healthcap'], "possible health points.")
 
-  def atk_function():#atkfunction
+  def atk_function():# atk function
     random_atk = randint(25,40)
     player['atk'] += random_atk
     if player['atk'] >= player['atkcap']:
@@ -31,7 +31,7 @@ def game_start(): #the entire game will take place within this function, we will
       print("\nYou gained", random_atk, "attack! \nYou now have", player['atk'], "out of", player['atkcap'], "possible attack points.")
       
 
-  def death_function():#deathfunction
+  def death_function():# death function
     while True:
       print("\nYou have been defeated.\nYour final score:", player['score'])
       restart_occurence = input("\nRestart? Y/N: ").upper()
@@ -44,13 +44,13 @@ def game_start(): #the entire game will take place within this function, we will
       else:
         print("\n\nEnter a valid input.")
         
-  def shop_function():#shopfunction
+  def shop_function():# shop function
     while True:
-      general_shop_choice = input("\nShop:\nWould you like (H)eal yourself, increase your (A)ttack, or (E)xit?: ").upper()
-    
+      general_shop_choice = input("\nShop:\nWould you like add (H)ealing, increase your (A)ttack, or (E)xit?: ").upper()
+
       if general_shop_choice == "H":
         healing_cost = 10#arbitrary value set to change
-        print("\nYou have", player['gold'], "gold. \nWould you like to heal yourself for", healing_cost, "gold?")
+        print("\nYou have", player['gold'], "gold. \nWould you like to heal and/or raise your maximum health for", healing_cost, "gold?")
         healing_shop_choice = input("Y/N: ").upper()
         if healing_shop_choice == "Y":
           if player ['hp'] == player ['healthcap']:
@@ -59,10 +59,11 @@ def game_start(): #the entire game will take place within this function, we will
           else:
             if player ['gold'] >= healing_cost:
               player['gold'] -= healing_cost
+              print("\n\nYou now have", player['gold'], "gold.")
               healing_function()
             else:
-              print("You do not have the necessary amount to purchase this. Current gold:", player['gold'])
-                
+              print("\nYou do not have the necessary amount to purchase this.")
+
       elif general_shop_choice == "A":
         atk_cost = 10#arbitrary value set to change
         print("\nYou have", player['gold'], "gold. \nWould you like to raise your attack for", atk_cost, "gold?")
@@ -74,26 +75,39 @@ def game_start(): #the entire game will take place within this function, we will
             else:
              if player['gold'] >= atk_cost:
                 player['gold'] -= atk_cost
+                print("\n\nYou now have", player['gold'], "gold.")
                 atk_function()
              else:
-                print("You do not have the necessary amount to purchase this. Current gold:", player['gold'])
-        elif atk_shop_choice == "N":
-            print("no")#wip
+                print("You do not have the necessary amount to purchase this.")
 
-
-
-        
       elif general_shop_choice == "E":
-        print("Successfully exited shop")
+        print("Successfully exited shop...")
         break
       else:
         print("\n\nEnter a valid input.")
 
+  def random_event_function():# random event function
+    random_occurence = randint(1,5)
+    if random_occurence == 1:
+      print("\nYou found a healing shrine!")#example
+      healing_function()
+    elif random_occurence == 2:
+      random_gold_amount = randint(1,6)
+      player['gold'] += random_gold_amount
+      print("\nYou found a chest with", random_gold_amount, "gold! You now have", player['gold'], "gold.")
+    elif random_occurence == 3:
+      print("3")
+    elif random_occurence == 4:
+      print("4")
+    elif random_occurence == 5:
+      print("5")
+
+
+
       
   def enemey_encounter(player, enemy_type1, enemytype2, enemy_type3):
     print("Hello, World!")
-  def random_events():
-    print("random event system")#wip -Ericksen
+  
   def attribute_function():
     print("this will manage player attributes") #wip: notetoself: include if player['hp']=<0 here
 
@@ -105,9 +119,9 @@ def game_start(): #the entire game will take place within this function, we will
   print("testing player goldpoints", player['gold'])
   time.sleep(0.25)
 #------------------------------------------------------------------------------------------------------------
-  testing = input("\nThis is where we can test what we have created, type in '(D)eath', '(E)ncounter', '(H)eal', or '(S)hop to test what will happen: ").upper()
+  testing = input("\nThis is where we can test what we have created, type in (D)eath, (E)ncounter, (H)eal, (S)hop, (R)andom, to test what will happen: ").upper()
   if testing == "D":
-      player['hp'] = 0
+    player['hp'] = 0
   elif testing == "E":
     time.sleep(0.25)
     player['gold'] += 5
@@ -116,10 +130,10 @@ def game_start(): #the entire game will take place within this function, we will
     healing_function()
   elif testing == "S":
     shop_function()
-
-  while True:
-    if player['hp'] <= 0:
-      death_function()
+  elif testing == "R":
+    random_event_function()
+    while True:
+      if player['hp'] <= 0:
+        death_function()
 #------------------------------------------------------------------------------------------------------------
 game_start() #do not add anything below this point
-
