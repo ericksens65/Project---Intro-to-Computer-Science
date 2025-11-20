@@ -12,18 +12,15 @@ def game_start(): #the entire game will take place within this function, we will
   enemy_type3 = {}
 
 #------------------------------------------------------------------------------------------------------------
-  def healing_function():
+ def healing_function():
     random_health = randint(25,40)
     player['hp'] += random_health
-    max_health_raised = player['hp'] - 100#doesnt work as intended, WIP
+    max_health_raised = player['hp']#wip
     if player['hp'] >= player['healthcap']:
       player['hp'] = player['healthcap']
-      print("\nYou gained", random_health,"health and raised your maximum health by", max_health_raised, "\nYou now have", player['hp'], "health points and can no longer raise your maximum health.")
-    elif player['hp'] >= 100:
-      player['hp'] + max_health_raised
-      print("\nYou gained", random_health, "health and raised your maximum health by", max_health_raised, "\nYou now have", player['hp'], "health points.")
+      print("\nYou gained", random_health,"health!", "\nYou now have", player['hp'], "health points and can no longer raise your maximum health.")
     else: 
-      print("\nYou gained", random_health, "health! \nYou now have", player['hp'], "health points.")
+      print("\nYou gained", random_health, "health! \nYou now have", player['hp'], "out of", player['healthcap'], "health points.")
 
   def death_function():
     while True:
