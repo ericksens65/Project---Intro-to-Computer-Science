@@ -5,7 +5,7 @@ from random import randint
 
 def game_start():
 
-  player = {'hp': 100, 'gold': 50, 'turns': 0, 'atk': 5, 'score': 0, 'healthcap': 1000, 'atkcap': 500}
+  player = {'hp': 1, 'gold': 50, 'turns': 0, 'atk': 5, 'score': 0, 'healthcap': 1000, 'atkcap': 500}
   
   enemy_type1 = {}
   enemy_type2 = {}
@@ -89,18 +89,54 @@ def game_start():
   def random_event_function():# random event function
     random_occurence = randint(1,5)
     if random_occurence == 1:
-      print("\nYou found a healing shrine!")#example
-      healing_function()
+      while True:
+        shrine_occurence = input("\nYou have stumbled upon a mysterious shrine. Will you take a closer look? (Can risky) \nY/N: ").upper()
+        if shrine_occurence == "Y":
+          heal_or_poison = randint(0,25)
+          if heal_or_poison >= 7:
+            print("\nYou have discovered a healing shrine!")
+            healing_function()
+          else:
+            random_poison = randint(1,10)
+            player['hp'] -= random_poison
+            print("\nYou have been poisoned by the shrine! You lost", random_poison, "health. \nYou now have", player['hp'], "out of", player['healthcap'], "possible health points.")
+          break
+        elif shrine_occurence == "N":
+          print("\nYou decided to not take the risk.")
+          break
+        else:
+          print("\nEnter a valid input.")
     elif random_occurence == 2:
-      random_gold_amount = randint(1,6)
-      player['gold'] += random_gold_amount
-      print("\nYou found a chest with", random_gold_amount, "gold! You now have", player['gold'], "gold.")
+      while True:
+        gold_occurence = input("\nYou have stumbled upon a chest. Will you take a closer look? (Can be risky) \nY/N: ").upper()
+        if gold_occurence == "Y":
+          random_gold_amount = randint(1,7)
+          gain_or_lose_gold = randint(0,20)
+          if gain_or_lose_gold == 18:
+            random_chest_damage_amount = randint (1,8)
+            print("\nThe chest was trapped! You lost", random_gold_amount, "gold and", random_chest_damage_amount, "health!")
+            player['gold'] -= random_gold_amount
+            player['hp'] -= random_chest_damage_amount
+            print("\nYou now have", player['gold'], "gold and", player['hp'], "health.")
+          elif gain_or_lose_gold >= 13:
+            print("\nThe chest was trapped! Fortunately, you only lost", random_gold_amount, "gold. \nYou now have", player['gold'], "gold.")
+            player['gold'] -= random_gold_amount
+          else:
+            player['gold'] += random_gold_amount
+            print("\nYou found a chest with", random_gold_amount, "gold! \nYou now have", player['gold'], "gold.")
+          break
+        elif gold_occurence == "N":
+          print("\nYou decided to not take the risk.")
+          break
+        else:
+          print("\nEnter a valid input.")
     elif random_occurence == 3:
-      print("3")
+      print("\nYou have stumbled upon a shop!")
+      shop_function()
     elif random_occurence == 4:
-      print("4")
+      print("4")#ambush encounter here?
     elif random_occurence == 5:
-      print("5")
+      print("5")#something else
 
 
 
@@ -109,7 +145,7 @@ def game_start():
     print("Hello, World!")
   
   def attribute_function():
-    print("this will manage player attributes") #wip: notetoself: include if player['hp']=<0 here
+    print("this will manage player attributes")
 
 #------------------------------------------------------------------------------------------------------------
   print("\nWelcome to TEXTBASEDADVENTUREGAME")
