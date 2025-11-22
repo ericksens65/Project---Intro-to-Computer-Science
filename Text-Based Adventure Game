@@ -1,175 +1,172 @@
-#------------------------------------------------------------------------------------------------------------
-import time 
-import random 
-from random import randint
-
-def game_start():
-
-  player = {'hp': 1, 'gold': 50, 'turns': 0, 'atk': 5, 'score': 0, 'healthcap': 1000, 'atkcap': 500}
-  
-  enemy_type1 = {}
-  enemy_type2 = {}
-  enemy_type3 = {}
-
-#------------------------------------------------------------------------------------------------------------
-  def healing_function():# healing function
-    random_health = randint(25,40)
-    player['hp'] += random_health
-    if player['hp'] >= player['healthcap']:
-      player['hp'] = player['healthcap']
-      print("\nYou gained", random_health,"health!", "\nYou now have", player['hp'], "health points and can no longer raise your maximum health.")
-    else: 
-      print("\nYou gained", random_health, "health! \nYou now have", player['hp'], "out of", player['healthcap'], "possible health points.")
-
-  def atk_function():# atk function
-    random_atk = randint(25,40)
-    player['atk'] += random_atk
-    if player['atk'] >= player['atkcap']:
-      player['atk'] = player ['atkcap']
-      print("\nYou gained", random_atk, "attack! \nYou now have", player['atk'], "attack points and can no longer raise your maximum attack.")
+# Module section, contains all modules
+import random
+import time
+# Variable section, contains all global variables
+character_classes = { # Can add any class by following the format
+    "warrior": {"attack": 20, "health": 100, "gold": 30},
+    "thief": {"attack": 25, "health": 75, "gold": 70},
+    "mage": {"attack": 35, "health": 40, "gold": 40},
+    "large_monster": {"attack": 40, "health": 100, "gold": 0},
+    "medium_monster": {"attack": 30, "health": 80, "gold": 0},
+    "small_monster": {"attack": 20, "health": 50, "gold": 0},
+}
+enemies = {
+    "turn_bracket1": { # Used for turns 0-20
+        "warrior": ("Brigand", "Pirate"),
+        "thief": ("Burglar", "Assassin"),
+        "mage": ("Warlock", "Witch"),
+        "large_monster": ("Bear",),
+        "medium_monster": ("Goblin",),
+        "small_monster": ("Slime",),
+    },
+    "turn_bracket2": {  # Used for turns 21-40
+        "warrior": ("Barbarian", "Ogre"),
+        "thief": ("Crime Boss", "Bandit Scout"),
+        "mage": ("Spellsword", "Demon Priest"),
+        "large_monster": ("Giant",),
+        "medium_monster": ("Goblin Shaman",),
+        "small_monster": ("Giant Rat",),
+    },
+    "turn_bracket3": {  # Used for turns 41-60
+        "warrior": ("Knight", "Orc"),
+        "thief": ("Nightblade", "Demon"),
+        "mage": ("Archmage", "Sorcerer"),
+        "large_monster": ("Dragon",),
+        "medium_monster": ("Orc Chieftain",),
+        "small_monster": ("Giant Slime",),
+    }
+}
+# Classes section, contains all classes
+class character: # Contains player and enemies
+    def __init__(self, name, character_class):
+        self.name = name
+        self.health = character_classes.get(character_class).get("health")
+        self.attack = character_classes.get(character_class).get("attack")
+class player(character): # Contains player
+    def __init__(self, name, character_class, gold, turns):
+        super().__init__(name, character_class)
+        self.turns = turns
+        self.gold = gold
+    def attack_opponent(self, opponent):
+        swing_chance = random.randint(1, 3)
+        if swing_chance == 1:
+            print("Your attack missed!")
+        elif swing_chance == 2 or swing_chance == 3:
+            opponent.health -= self.attack
+            print("Attack successful, your opponent's hp is now: ", opponent.health)
+            if opponent.health <= 0:
+                return True
+        counter_chance = random.randint(1, 4)
+        if counter_chance == 1 or counter_chance == 2:
+            print('The ', opponent.name, "'s attack missed!")
+        elif counter_chance == 3 or counter_chance == 4:
+            self.health -= opponent.attack
+            print("You are hit by the ", opponent.name, "! Your hp is now: ", self.health)
+        else:
+            print("You failed to escape the ", opponent.name, "! Luckily, you managed to evade the attacks.")
+    def run_from_opponent(self, opponent):
+        run_chance = random.randint(1, 3)
+        if run_chance == 1:
+            print("You successfully escape the ", opponent.name, "!")
+            return True
+        else:
+            print("You failed to escape the ", opponent.name, "!")
+            self.health -= opponent.attack
+            print("You are hit by the ", opponent.name, "! Your hp is now: ", self.health)
+    @staticmethod
+    def ask_name():
+        chosen_name = input("What is your name, adventurer?: ")
+        return chosen_name
+    @staticmethod
+    def ask_character_class():
+        while True:
+            chosen_character_class = input("What is your class, adventurer? (W)arrior, (T)hief, (M)age: ")
+            try:
+                if chosen_character_class.upper() == "W":
+                    return "warrior"
+                elif chosen_character_class.upper() == "T":
+                    return "thief"
+                elif chosen_character_class.upper() == "M":
+                    return "mage"
+                else:
+                    print("Please enter W, T, or M.")
+            except ValueError:
+                print("Please enter W, T, or M.")
+    @staticmethod
+    def ask_gold():
+        while True:
+            chosen_gold = input("How much gold have you gathered on your adventures? (0-200 recommended): ")
+            try:
+                return int(chosen_gold)
+            except ValueError:
+                print("Please enter a number.")
+    @staticmethod
+    def ask_turns():
+        while True:
+            chosen_turns = input("How many months have you been adventuring? (0-12, 0 recommended): ")
+            try:
+                if int(chosen_turns) <= 12 and int(chosen_turns) >= 0:
+                    return int(chosen_turns)
+                else:
+                    print("Please enter a number between 0 and 12.")
+            except ValueError:
+                print("Please enter a number.")
+class enemy(character): # Contains enemies
+    def __init__(self, name, character_class):
+        super().__init__(name, character_class)
+        self.gold = character_classes.get(character_class).get("gold")
+# Functions section, contains all functions
+def combat_sequence(player, name, class_type):
+    opponent = enemy(name, class_type)
+    print("You have encountered a ", name, "!")
+    escaped = False
+    victorious = False
+    dead = False
+    while not escaped and not victorious and not dead:
+        response = input("Would you like to (A)ttack or attempt to (R)un?: ")
+        if response.upper() == "A":
+            kill = player.attack_opponent(opponent)
+            if kill:
+                victorious = True
+        elif response.upper() == "R":
+            attempt = player.run_from_opponent(opponent)
+            if attempt:
+                escaped = True
+        else:
+            print("Please enter A or R.")
+        if player.health <= 0:
+            dead = True
+def generate_event(player):
+    type_select = random.randint(1, 3) # Used to determine if a random event or encounter is generated
+    if type_select == 1: # Random event
+        print("Non-Hostile Event")
+    elif type_select == 2 or type_select == 3:
+        bracket_level = 0
+        if player.turns <= 20:
+            bracket_level = enemies["turn_bracket1"]
+        elif player.turns <= 40:
+            bracket_level = enemies["turn_bracket2"]
+        else:
+            bracket_level = enemies["turn_bracket3"]
+        enemy_class_type = random.choice(list(bracket_level.keys()))
+        enemy_name = random.choice(bracket_level[enemy_class_type])
+        combat_sequence(player, enemy_name, enemy_class_type)
+# Main game section, starts and controls game
+def game_main():
+    alive = True
+    print("Hello adventurer, the princess has been kidnapped by evil-doers and the responsibility to save her falls into your hands!")
+    player1 = player(player.ask_name(), player.ask_character_class(), player.ask_gold(), player.ask_turns())
+    while player1.turns <= 60 and alive == True:
+        generate_event(player1)
+        player1.turns += 1
+        if player1.health <= 0:
+            alive = False
+            break
+        else:
+            print("You resume your journey, searching for the princess.")
+            time.sleep(3)
+    if alive == False:
+        print("You have failed in your mission to save the princess. You will forever got down in history as a failure!")
     else:
-      print("\nYou gained", random_atk, "attack! \nYou now have", player['atk'], "out of", player['atkcap'], "possible attack points.")
-      
-
-  def death_function():# death function
-    while True:
-      print("\nYou have been defeated.\nYour final score:", player['score'])
-      restart_occurence = input("\nRestart? Y/N: ").upper()
-      if restart_occurence == "Y":
-        print("\n\nRestarting...")
-        game_start()
-      elif restart_occurence == "N":
-        print("\n\nGame over.")
-        quit()
-      else:
-        print("\n\nEnter a valid input.")
-        
-  def shop_function():# shop function
-    while True:
-      general_shop_choice = input("\nShop:\nWould you like add (H)ealing, increase your (A)ttack, or (E)xit?: ").upper()
-
-      if general_shop_choice == "H":
-        healing_cost = 10#arbitrary value set to change
-        print("\nYou have", player['gold'], "gold. \nWould you like to heal and/or raise your maximum health for", healing_cost, "gold?")
-        healing_shop_choice = input("Y/N: ").upper()
-        if healing_shop_choice == "Y":
-          if player ['hp'] == player ['healthcap']:
-            print("Your health is already at its maximum.")
-            return
-          else:
-            if player ['gold'] >= healing_cost:
-              player['gold'] -= healing_cost
-              print("\n\nYou now have", player['gold'], "gold.")
-              healing_function()
-            else:
-              print("\nYou do not have the necessary amount to purchase this.")
-
-      elif general_shop_choice == "A":
-        atk_cost = 10#arbitrary value set to change
-        print("\nYou have", player['gold'], "gold. \nWould you like to raise your attack for", atk_cost, "gold?")
-        atk_shop_choice = input("Y/N: ").upper()
-        if atk_shop_choice == "Y":
-            if player['atk'] == player ['atkcap']:
-                print("Your attack is already at its maximum.")
-                return
-            else:
-             if player['gold'] >= atk_cost:
-                player['gold'] -= atk_cost
-                print("\n\nYou now have", player['gold'], "gold.")
-                atk_function()
-             else:
-                print("You do not have the necessary amount to purchase this.")
-
-      elif general_shop_choice == "E":
-        print("Successfully exited shop...")
-        break
-      else:
-        print("\n\nEnter a valid input.")
-
-  def random_event_function():# random event function
-    random_occurence = randint(1,5)
-    if random_occurence == 1:
-      while True:
-        shrine_occurence = input("\nYou have stumbled upon a mysterious shrine. Will you take a closer look? (Can risky) \nY/N: ").upper()
-        if shrine_occurence == "Y":
-          heal_or_poison = randint(0,25)
-          if heal_or_poison >= 7:
-            print("\nYou have discovered a healing shrine!")
-            healing_function()
-          else:
-            random_poison = randint(1,10)
-            player['hp'] -= random_poison
-            print("\nYou have been poisoned by the shrine! You lost", random_poison, "health. \nYou now have", player['hp'], "out of", player['healthcap'], "possible health points.")
-          break
-        elif shrine_occurence == "N":
-          print("\nYou decided to not take the risk.")
-          break
-        else:
-          print("\nEnter a valid input.")
-    elif random_occurence == 2:
-      while True:
-        gold_occurence = input("\nYou have stumbled upon a chest. Will you take a closer look? (Can be risky) \nY/N: ").upper()
-        if gold_occurence == "Y":
-          random_gold_amount = randint(1,7)
-          gain_or_lose_gold = randint(0,20)
-          if gain_or_lose_gold == 18:
-            random_chest_damage_amount = randint (1,8)
-            print("\nThe chest was trapped! You lost", random_gold_amount, "gold and", random_chest_damage_amount, "health!")
-            player['gold'] -= random_gold_amount
-            player['hp'] -= random_chest_damage_amount
-            print("\nYou now have", player['gold'], "gold and", player['hp'], "health.")
-          elif gain_or_lose_gold >= 13:
-            print("\nThe chest was trapped! Fortunately, you only lost", random_gold_amount, "gold. \nYou now have", player['gold'], "gold.")
-            player['gold'] -= random_gold_amount
-          else:
-            player['gold'] += random_gold_amount
-            print("\nYou found a chest with", random_gold_amount, "gold! \nYou now have", player['gold'], "gold.")
-          break
-        elif gold_occurence == "N":
-          print("\nYou decided to not take the risk.")
-          break
-        else:
-          print("\nEnter a valid input.")
-    elif random_occurence == 3:
-      print("\nYou have stumbled upon a shop!")
-      shop_function()
-    elif random_occurence == 4:
-      print("4")#ambush encounter here?
-    elif random_occurence == 5:
-      print("5")#something else
-
-
-
-      
-  def enemey_encounter(player, enemy_type1, enemytype2, enemy_type3):
-    print("Hello, World!")
-  
-  def attribute_function():
-    print("this will manage player attributes")
-
-#------------------------------------------------------------------------------------------------------------
-  print("\nWelcome to TEXTBASEDADVENTUREGAME")
-  time.sleep(0.25)
-  print("\ntesting player healthpoints:", player['hp'])
-  time.sleep(0.25)
-  print("testing player goldpoints", player['gold'])
-  time.sleep(0.25)
-#------------------------------------------------------------------------------------------------------------
-  testing = input("\nThis is where we can test what we have created, type in (D)eath, (E)ncounter, (H)eal, (S)hop, (R)andom, to test what will happen: ").upper()
-  if testing == "D":
-    player['hp'] = 0
-  elif testing == "E":
-    time.sleep(0.25)
-    player['gold'] += 5
-    print("\nYou defeated an enemy, you now have", player['gold'], "gold. Rerun the program to continue testing")
-  elif testing == "H":
-    healing_function()
-  elif testing == "S":
-    shop_function()
-  elif testing == "R":
-    random_event_function()
-    while True:
-      if player['hp'] <= 0:
-        death_function()
-#------------------------------------------------------------------------------------------------------------
-game_start() #do not add anything below this point
+        print("Congratulations! You saved the princess from certain doom. You can now live the rest of your days in peace.")
+game_main()
