@@ -4,12 +4,12 @@ import time
 from random import randint
 
 character_classes = {
-    "warrior": {"attack": 20, "health": 100, "gold": 30},
-    "thief": {"attack": 25, "health": 75, "gold": 70},
-    "mage": {"attack": 35, "health": 40, "gold": 40},
-    "large_monster": {"attack": 40, "health": 100, "gold": 0},
-    "medium_monster": {"attack": 30, "health": 80, "gold": 0},
-    "small_monster": {"attack": 20, "health": 50, "gold": 0},
+    "warrior": {"attack": 20, "health": 100, "gold": 0},
+    "thief": {"attack": 25, "health": 75, "gold": 0},
+    "mage": {"attack": 35, "health": 40, "gold": 0},
+    "large_monster": {"attack": 35, "health": 70, "gold": 15},
+    "medium_monster": {"attack": 20, "health": 50, "gold": 10},
+    "small_monster": {"attack": 15, "health": 30, "gold": 5},
 }
 
 enemies = {
@@ -62,10 +62,17 @@ class player(character):
         self.gold = gold
 
     def change_gold(self, amount, multiplier):
-        amount = amount * multiplier
-        self.gold += amount
+        gold_change_value = amount * multiplier
+        self.gold += gold_change_value
         time.sleep(0.25)
-        print("\nYou now have", self.gold, "gold.")
+        if self.gold <= 0:
+            self.gold = 0
+        if gold_change_value > 0:
+            print("\nYou gained", gold_change_value, "gold! You now have", self.gold, "gold.")
+        elif gold_change_value == 0:
+            print("\nYou did not gain any gold from this encounter.")
+        elif gold_change_value < 0:
+            print("\nYou lost", -gold_change_value, "gold! You now have", self.gold, "gold.")
 
     def change_attack(self, amount, multiplier):
         amount = amount * multiplier
@@ -82,21 +89,31 @@ class player(character):
         amount = amount * multiplier
         self.turns += amount
         time.sleep(0.25)
-        print("\nYou have been adventuring for", self.turns, "months (turns).")
-        time.sleep(0.25)
-        print("\nCurrent Status:\nHealth:", self.health, "\nAttack:", self.attack, "\nGold:", self.gold)
+        if self.health <= 0:
+            print("\nFinal Stats: \nHealth:", self.health, "\nMaximum Health:", self.health_max, "\nAttack:", self.attack, "\nGold:", self.gold)
+        else:
+            print("\nYou have been adventuring for", self.turns, "months (turns).")
+            time.sleep(0.25)
+            print("\nCurrent Status:\nHealth:", self.health, "\nMaximum Health:", self.health_max, "\nAttack:", self.attack, "\nGold:", self.gold)
 
     def change_health(self, amount, multiplier):
         #multiplier: typically 1 or -1 (to add/subtract)
         health_change_value = amount * multiplier
         prev_health = self.health
         self.health += health_change_value
+        if self.health <= 0:
+            self.health = 0
+            time.sleep(0.25)
+            print("\nYou lost", -health_change_value, "health. \nYou now have", self.health, "out of", self.health_max, "possible health points.")
+            self.death_function()
+            return
+            
         if self.health >= self.health_max:
             healed_amount = self.health_max - prev_health if health_change_value > 0 else 0
             self.health = self.health_max
             if health_change_value > 0:
                 time.sleep(0.25)
-                print("\nYou gained", healed_amount, "health!", "\nYou now have", self.health, "health points and can no longer raise your maximum health.")
+                print("\nYou gained", healed_amount, "health!", "\nYou now have", self.health, "health points and have reached your maximum health capacity.")
             else:
                 time.sleep(0.25)
                 print("\nYou lost", -health_change_value, "health. \nYou now have", self.health, "out of", self.health_max, "possible health points.")
@@ -155,7 +172,7 @@ class player(character):
     def ask_character_class():
         while True:
             time.sleep(0.25)
-            chosen_character_class = input("\nChoose your starting class: \n(W)arrior: (Health: 100, Attack: 20, Gold: 30) \n(T)hief: (Health: 75, Attack: 25, Gold: 70) \n(M)age: (Health: 40, Attack: 35, Gold: 40) \n: ")
+            chosen_character_class = input("\nChoose your starting class: \n(W)arrior: (Health: 100, Attack: 20, Gold: 0) \n(T)hief: (Health: 75, Attack: 25, Gold: 0) \n(M)age: (Health: 40, Attack: 35, Gold: 0) \n: ")
             try:
                 if chosen_character_class.upper() == "W":
                     return "warrior"
@@ -174,7 +191,7 @@ class player(character):
     def ask_gold():
         while True:
             time.sleep(0.25)
-            chosen_gold = input("\nHow much gold have you gathered on your adventures? (0-200, 0 is recommended for new players): ")
+            chosen_gold = input("\nHow much gold have you gathered on your adventures? (0 is recommended for new players): ")
             try:
                 return int(chosen_gold)
             except ValueError:
@@ -207,7 +224,7 @@ class player(character):
     def death_function(self):
         while True:
             time.sleep(0.25)
-            print("\nYou have been defeated.\nYour final score:", self.score)
+            print("\nYou have been defeated.")
             restart_occurence = input("\nRestart? Y/N: ").upper()
             if restart_occurence == "Y":
                 time.sleep(0.25)
@@ -223,56 +240,62 @@ class player(character):
                 print("\n\nEnter a valid input.")
 
     def shop_function(self):
-        healing_cost = randint(7,25) # arbitrary value set to change
-        atk_cost = randint(5,25)  # arbitrary value set to change
-        while True:
-            time.sleep(0.25)
-            general_shop_choice = input("\nWould you like add (H)ealing, increase your (A)ttack, or (E)xit?: ").upper()
-            if general_shop_choice == "H":
+        if self.gold > 0:
+            healing_cost = randint(7,25) # arbitrary value set to change
+            atk_cost = randint(5,25)  # arbitrary value set to change
+            while True:
                 time.sleep(0.25)
-                print("\nYou have", self.gold, "gold. \nWould you like to heal and/or raise your maximum health for", healing_cost, "gold?")
-                healing_shop_choice = input("Y/N: ").upper()
-                if healing_shop_choice == "Y":
-                    if self.health == self.health_max:
-                        time.sleep(0.25)
-                        print("Your health is already at its maximum.")
-                        return
-                    else:
-                        if self.gold >= healing_cost:
-                            self.gold -= healing_cost
+                general_shop_choice = input("\nWould you like add (H)ealing, increase your (A)ttack, or (E)xit?: ").upper()
+                if general_shop_choice == "H":
+                    time.sleep(0.25)
+                    print("\nYou have", self.gold, "gold. \nWould you like to heal and/or raise your maximum health for", healing_cost, "gold?")
+                    healing_shop_choice = input("Y/N: ").upper()
+                    if healing_shop_choice == "Y":
+                        if self.health == self.health_max:
                             time.sleep(0.25)
-                            print("\n\nYou now have", self.gold, "gold.")
-                            self.healing_function()
+                            print("Your health is already at its maximum.")
+                            return
                         else:
+                            if self.gold >= healing_cost:
+                                self.gold -= healing_cost
+                                time.sleep(0.25)
+                                print("\n\nYou now have", self.gold, "gold.")
+                                self.healing_function()
+                            else:
+                                time.sleep(0.25)
+                                print("\nYou do not have the necessary amount to purchase this.")
+                elif general_shop_choice == "A":
+                    time.sleep(0.25)
+                    print("\nYou have", self.gold, "gold. \nWould you like to raise your attack for", atk_cost, "gold?")
+                    atk_shop_choice = input("Y/N: ").upper()
+                    if atk_shop_choice == "Y":
+                        if self.attack == getattr(self, "attack_max", 500):
                             time.sleep(0.25)
-                            print("\nYou do not have the necessary amount to purchase this.")
-            elif general_shop_choice == "A":
-                time.sleep(0.25)
-                print("\nYou have", self.gold, "gold. \nWould you like to raise your attack for", atk_cost, "gold?")
-                atk_shop_choice = input("Y/N: ").upper()
-                if atk_shop_choice == "Y":
-                    if self.attack == getattr(self, "attack_max", 500):
-                        time.sleep(0.25)
-                        print("\nYour attack is already at its maximum.")
-                        return
-                    else:
-                        if self.gold >= atk_cost:
-                            self.gold -= atk_cost
-                            time.sleep(0.25)
-                            print("\n\nYou now have", self.gold, "gold.")
-                            self.atk_function()
+                            print("\nYour attack is already at its maximum.")
+                            return
                         else:
-                            time.sleep(0.25)
-                            print("\nYou do not have the necessary amount to purchase this.")
-            elif general_shop_choice == "E":
-                time.sleep(0.25)
-                print("Successfully exited shop...")
-                break
-            else:
-                time.sleep(0.25)
-                print("\n\nEnter a valid input.")
+                            if self.gold >= atk_cost:
+                                self.gold -= atk_cost
+                                time.sleep(0.25)
+                                print("\n\nYou now have", self.gold, "gold.")
+                                self.atk_function()
+                            else:
+                                time.sleep(0.25)
+                                print("\nYou do not have the necessary amount to purchase this.")
+                elif general_shop_choice == "E":
+                    time.sleep(0.25)
+                    print("Successfully exited shop...")
+                    break
+                else:
+                    time.sleep(0.25)
+                    print("\n\nEnter a valid input.")
 
     def random_event_shrine(self):
+        if self.health >= self.health_max:
+            time.sleep(0.25)
+            print("\nYou found a healing shrine but your health is already full!")
+            return
+
         while True:
             time.sleep(0.25)
             shrine_occurence = input("\nYou have stumbled upon a mysterious shrine. Will you take a closer look? \nY/N: ").upper()
@@ -282,10 +305,11 @@ class player(character):
                     time.sleep(0.25)
                     print("\nYou have discovered a healing shrine!")
                     self.healing_function()
+                    break
                 else:
                     random_poison = randint(1, 10)
                     self.change_health(random_poison, -1)
-                break
+                    break
             elif shrine_occurence == "N":
                 time.sleep(0.25)
                 print("\nYou decided to not take the risk.")
@@ -297,26 +321,24 @@ class player(character):
     def random_event_chest(self):
         while True:
             time.sleep(0.25)
-            gold_occurence = input("\nYou have stumbled upon a chest.Will you take a closer look? \nY/N: ").upper()
+            gold_occurence = input("\nYou have stumbled upon a chest. Will you take a closer look? \nY/N: ").upper()
             if gold_occurence == "Y":
                 random_gold_amount = randint(1, 7)
                 gain_or_lose_gold = randint(0, 20)
                 if gain_or_lose_gold == 18:
                     random_chest_damage_amount = randint(1, 8)
                     time.sleep(0.25)
-                    print("\nThe chest turned out to be trapped! You lost", random_gold_amount, "gold and", random_chest_damage_amount, "health!")
-                    self.gold -= random_gold_amount
+                    print("\nThe chest turned out to be trapped!")
+                    self.change_gold(random_gold_amount, -1)
                     self.change_health(random_chest_damage_amount, -1)
                     time.sleep(0.25)
-                    print("\nYou now have", self.gold, "gold and", self.health, "health.")
                 elif gain_or_lose_gold >= 13:
                     time.sleep(0.25)
-                    print("\nThe chest was trapped! Fortunately, you only lost", random_gold_amount, "gold. \nYou now have", self.gold, "gold.")
-                    self.gold -= random_gold_amount
+                    print("\nThe chest was trapped!")
+                    self.change_gold(random_gold_amount, -1)
                 else:
-                    self.gold += random_gold_amount
+                    self.change_gold(random_gold_amount, 1)
                     time.sleep(0.25)
-                    print("\nYou found a chest with", random_gold_amount, "gold! \nYou now have", self.gold, "gold.")
                 break
             elif gold_occurence == "N":
                 time.sleep(0.25)
@@ -362,9 +384,21 @@ class player(character):
                     print("\nYou do not have enough gold to purchase the potion, the old woman grunts and walks away.")
                     break
             elif answer.upper() == "W":
-                time.sleep(0.25)
-                print("\nYou keep your eyes straight and walk past the woman. (nothing happens)")
-                break
+                random_woman_choice = randint(1,10)
+                if random_woman_choice <= 3:
+                    if self.gold == 0:
+                        print("\nThe woman feels bad for you and gifts you some gold.")
+                        player1.change_gold(randint(5,8),1)
+                        break
+                    else:
+                        print("\nThe woman knows you're carrying gold so she decides to punch you for not giving her any.")
+                        damage = randint(1,5)
+                        player1.change_health(damage, -1)
+                        break
+                else:
+                    time.sleep(0.25)
+                    print("\nYou keep your eyes straight and walk past the woman. (nothing happens)")
+                    break
 
     def random_event_doctor(self):
         time.sleep(0.25)
@@ -382,9 +416,22 @@ class player(character):
                 break
             elif answer.upper() == "K":
                 time.sleep(0.25)
-                print("\nYou kill the doctor and loot their cabin")
+                print("\nYou killed the doctor and loot their cabin")
                 self.change_gold(random.randint(1, 50), 1)
                 break
+    def random_event_gain_gold(self):
+        time.sleep(0.25)
+        random_gold = randint(5,10)
+        self.gold += random_gold
+        print("\nDuring your travels, you stumbled upon", random_gold, "gold!. You now have", self.gold, "gold.")
+        
+    def random_event_gain_attack(self):
+        print("\nYou stumble upon a blacksmith, they offer to increase your weapon's attack at no extra cost!")
+        self.change_attack(randint(1,25),1)
+        
+        
+
+        
 
 class enemy(character):
     def __init__(self, name, character_class):
@@ -397,7 +444,11 @@ class enemy(character):
         if self.health >= self.health_max:
             self.health = self.health_max
         time.sleep(0.25)
-        print("\nThe enemy has", self.health, "out of", self.health_max, "possible health points.")
+        if self.health <= 0:
+            self.health = 0
+            print("You have defeated the enemy!")
+        else:
+            print("\nThe enemy has", self.health, "out of", self.health_max, "possible health points.")
 
 def combat_sequence(player_obj, name, class_type):
     opponent = enemy(name, class_type)
@@ -434,7 +485,7 @@ def combat_sequence(player_obj, name, class_type):
             dead = True
 
 def generate_event(player_obj):
-    type_select = random.randint(1, 3)
+    type_select = random.randint(1, 2)
     if type_select == 1:
         event_pool = [
             lambda p: p.random_event_cheap_potion(),  
@@ -442,10 +493,12 @@ def generate_event(player_obj):
             lambda p: p.random_event_shrine(),  
             lambda p: p.random_event_chest(),   
             lambda p: p.random_event_shop(),    
-            lambda p: p.random_event_ambush(),   
+            lambda p: p.random_event_ambush(),
+            lambda p: p.random_event_gain_gold(),
+            lambda p: p.random_event_gain_attack()
         ]
         random.choice(event_pool)(player_obj)
-    elif type_select == 2 or type_select == 3:
+    elif type_select == 2:
         bracket_level = 0
         if player_obj.turns <= 20:
             bracket_level = enemies["turn_bracket1"]
