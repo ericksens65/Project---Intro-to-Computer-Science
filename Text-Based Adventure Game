@@ -1,4 +1,5 @@
 # Module section, contains all modules
+import math
 import random
 import time
 # Variable section, contains all global variables
@@ -36,32 +37,60 @@ enemies = {
         "small_monster": ("Giant Slime",),
     }
 }
+random_events = [
+    lambda player: player.cheap_potion(),
+    lambda player: player.doctor(),
+]
 # Classes section, contains all classes
 class character: # Contains player and enemies
     def __init__(self, name, character_class):
         self.name = name
         self.health = character_classes.get(character_class).get("health")
+        self.health_max = character_classes.get(character_class).get("health")
         self.attack = character_classes.get(character_class).get("attack")
+    def change_health_max(self, amount, multiplier):
+        amount = amount * multiplier
+        self.health_max += amount
+        print("Your max health is now: ", self.health_max)
 class player(character): # Contains player
     def __init__(self, name, character_class, gold, turns):
         super().__init__(name, character_class)
         self.turns = turns
         self.gold = gold
+    def change_gold(self, amount, multiplier):
+        amount = amount * multiplier
+        self.gold += amount
+        print("Your gold is now: ", self.gold)
+    def change_attack(self, amount, multiplier):
+        amount = amount * multiplier
+        self.attack += amount
+        print("Your attack is now: ", self.attack)
+    def change_turns(self, amount, multiplier):
+        amount = amount * multiplier
+        self.turns += amount
+        print(self.turns, " months (turns) have passed. ")
+    def change_health(self, amount, multiplier):
+        amount = amount * multiplier
+        self.health += amount
+        if self.health >= self.health_max:
+            self.health = self.health_max
+        print("Your health is now: ", self.health)
     def attack_opponent(self, opponent):
         swing_chance = random.randint(1, 3)
         if swing_chance == 1:
             print("Your attack missed!")
         elif swing_chance == 2 or swing_chance == 3:
-            opponent.health -= self.attack
-            print("Attack successful, your opponent's hp is now: ", opponent.health)
+            print("Attack successful!")
+            opponent.change_health(self.attack, -1)
             if opponent.health <= 0:
+                self.change_gold(opponent.gold, 1)
                 return True
         counter_chance = random.randint(1, 4)
         if counter_chance == 1 or counter_chance == 2:
             print('The ', opponent.name, "'s attack missed!")
         elif counter_chance == 3 or counter_chance == 4:
-            self.health -= opponent.attack
-            print("You are hit by the ", opponent.name, "! Your hp is now: ", self.health)
+            print("You are hit by the ", opponent.name, "!")
+            self.change_health(opponent.attack, -1)
         else:
             print("You failed to escape the ", opponent.name, "! Luckily, you managed to evade the attacks.")
     def run_from_opponent(self, opponent):
@@ -71,8 +100,8 @@ class player(character): # Contains player
             return True
         else:
             print("You failed to escape the ", opponent.name, "!")
-            self.health -= opponent.attack
-            print("You are hit by the ", opponent.name, "! Your hp is now: ", self.health)
+            print("You are hit by the ", opponent.name, "!")
+            self.change_health(opponent.attack, -1)
     @staticmethod
     def ask_name():
         chosen_name = input("What is your name, adventurer?: ")
@@ -111,13 +140,62 @@ class player(character): # Contains player
                     print("Please enter a number between 0 and 12.")
             except ValueError:
                 print("Please enter a number.")
+    # Random events section, contains all random events. Side note: all random events must be placed in the random_events global variable
+    def cheap_potion(self):
+        print("You were passing through a humble village when a small, old woman tapped you on the shoulder, offering you a cheap potion. She claims it is a potion of vitality.")
+        while True:
+            answer = input("Would you like to (B)uy the cheap potion for 5 gold or (W)alk away?: ")
+            if answer.upper() == "B":
+                if self.gold >= 5:
+                    print("You purchase the cheap vitality potion from the old woman")
+                    self.change_gold(5, -1)
+                    self.change_health_max(10, 1)
+                    break
+                else:
+                    print("You do not have enough gold to purchase the potion, the old woman grunts and walks away.")
+                    break
+            elif answer.upper() == "W":
+                print("You keep your eyes straight and walk past the woman. (nothing happens)")
+                break
+    def doctor(self):
+        print("You come across a small cabin, the sole resident claiming to be an experienced doctor.")
+        while True:
+            answer = input(
+                "Would you like to (C)heck your condition (displays all stats), (W)alk away?, or (K)ill the doctor and loot their home?: ")
+            if answer.upper() == "C":
+                print("Health: ", self.health, "\nMax health: ", self.health_max, "\nGold: ", self.gold, "\nAttack: ",
+                      self.attack, "\nMonths (turns) survived: ", self.turns)
+                break
+            elif answer.upper() == "W":
+                print("You walk away from the doctor. (nothing happens)")
+                break
+            elif answer.upper() == "K":
+                print("You kill the doctor and loot their cabin")
+                self.change_gold(random.randint(1, 50), 1)
+                break
 class enemy(character): # Contains enemies
     def __init__(self, name, character_class):
         super().__init__(name, character_class)
         self.gold = character_classes.get(character_class).get("gold")
+    def change_health(self, amount, multiplier):
+        amount = amount * multiplier
+        self.health += amount
+        if self.health >= self.health_max:
+            self.health = self.health_max
+        print(self.name, "'s health is now: ", self.health)
+
 # Functions section, contains all functions
 def combat_sequence(player, name, class_type):
     opponent = enemy(name, class_type)
+    multiplier = 2 # Level (turn) scaling system
+    if player.turns <= 20:
+        multiplier = 1.0
+    elif player.turns <= 40:
+        multiplier = 1.5
+    opponent.health = int(opponent.health * multiplier)
+    opponent.health_max = int(opponent.health_max * multiplier)
+    opponent.attack = int(opponent.attack * multiplier)
+    opponent.gold = int(opponent.gold * multiplier)
     print("You have encountered a ", name, "!")
     escaped = False
     victorious = False
@@ -139,7 +217,7 @@ def combat_sequence(player, name, class_type):
 def generate_event(player):
     type_select = random.randint(1, 3) # Used to determine if a random event or encounter is generated
     if type_select == 1: # Random event
-        print("Non-Hostile Event")
+        random.choice(random_events)(player)
     elif type_select == 2 or type_select == 3:
         bracket_level = 0
         if player.turns <= 20:
@@ -158,7 +236,7 @@ def game_main():
     player1 = player(player.ask_name(), player.ask_character_class(), player.ask_gold(), player.ask_turns())
     while player1.turns <= 60 and alive == True:
         generate_event(player1)
-        player1.turns += 1
+        player1.change_turns(1, 1)
         if player1.health <= 0:
             alive = False
             break
