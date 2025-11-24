@@ -4,12 +4,12 @@ import time
 from random import randint
 
 character_classes = {
-    "warrior": {"attack": 20, "health": 100, "gold": 0},
-    "thief": {"attack": 25, "health": 75, "gold": 0},
-    "mage": {"attack": 35, "health": 40, "gold": 0},
-    "large_monster": {"attack": 35, "health": 70, "gold": 15},
-    "medium_monster": {"attack": 20, "health": 50, "gold": 10},
-    "small_monster": {"attack": 15, "health": 30, "gold": 5},
+    "warrior": {"attack": 30, "health": 125, "gold": 0},
+    "thief": {"attack": 40, "health": 90, "gold": 0},
+    "mage": {"attack": 35, "health": 110, "gold": 0},
+    "large_monster": {"attack": 20, "health": 50, "gold": 15},
+    "medium_monster": {"attack": 10, "health": 40, "gold": 10},
+    "small_monster": {"attack": 5, "health": 30, "gold": 5},
 }
 
 enemies = {
@@ -172,7 +172,7 @@ class player(character):
     def ask_character_class():
         while True:
             time.sleep(0.25)
-            chosen_character_class = input("\nChoose your starting class: \n(W)arrior: (Health: 100, Attack: 20, Gold: 0) \n(T)hief: (Health: 75, Attack: 25, Gold: 0) \n(M)age: (Health: 40, Attack: 35, Gold: 0) \n: ")
+            chosen_character_class = input("\nChoose your starting class: \n(W)arrior: (Health: 125, Attack: 30, Gold: 0) \n(T)hief: (Health: 90, Attack: 40, Gold: 0) \n(M)age: (Health: 110, Attack: 35, Gold: 0) \n: ")
             try:
                 if chosen_character_class.upper() == "W":
                     return "warrior"
@@ -240,7 +240,6 @@ class player(character):
                 print("\n\nEnter a valid input.")
 
     def shop_function(self):
-        if self.gold > 0:
             healing_cost = randint(7,25) # arbitrary value set to change
             atk_cost = randint(5,25)  # arbitrary value set to change
             while True:
@@ -452,11 +451,11 @@ class enemy(character):
 
 def combat_sequence(player_obj, name, class_type):
     opponent = enemy(name, class_type)
-    multiplier = 2 
-    if player_obj.turns <= 20:
-        multiplier = 1.0
-    elif player_obj.turns <= 40:
+    multiplier = 1 
+    if player_obj.turns >= 20:
         multiplier = 1.5
+    elif player_obj.turns >= 40:
+        multiplier = 2
     opponent.health = int(opponent.health * multiplier)
     opponent.health_max = int(opponent.health_max * multiplier)
     opponent.attack = int(opponent.attack * multiplier)
@@ -485,8 +484,8 @@ def combat_sequence(player_obj, name, class_type):
             dead = True
 
 def generate_event(player_obj):
-    type_select = random.randint(1, 2)
-    if type_select == 1:
+    type_select = random.randint(1, 3)
+    if type_select == 1 or type_select == 2:
         event_pool = [
             lambda p: p.random_event_cheap_potion(),  
             lambda p: p.random_event_doctor(),        
@@ -498,7 +497,7 @@ def generate_event(player_obj):
             lambda p: p.random_event_gain_attack()
         ]
         random.choice(event_pool)(player_obj)
-    elif type_select == 2:
+    elif type_select == 3:
         bracket_level = 0
         if player_obj.turns <= 20:
             bracket_level = enemies["turn_bracket1"]
@@ -509,7 +508,7 @@ def generate_event(player_obj):
         enemy_class_type = random.choice(list(bracket_level.keys()))
         enemy_name = random.choice(bracket_level[enemy_class_type])
         combat_sequence(player_obj, enemy_name, enemy_class_type)
-
+#----------------------------------------------------------------------------
 def game_main():
     alive = True
     print("The princess has been kidnapped by evil-doers and the responsibility to save her falls into your hands!")
