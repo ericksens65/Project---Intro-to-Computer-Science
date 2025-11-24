@@ -126,11 +126,11 @@ class player(character):
                 print("\nYou lost", -health_change_value, "health. \nYou now have", self.health, "out of", self.health_max, "possible health points.")
 
     def attack_opponent(self, opponent):
-        swing_chance = random.randint(1, 3)
+        swing_chance = random.randint(1, 6)
         if swing_chance == 1:
             time.sleep(0.25)
             print("\nYour attack missed!")
-        elif swing_chance == 2 or swing_chance == 3:
+        elif swing_chance > 1:
             time.sleep(0.25)
             print("\nYour attack was successful!")
             opponent.change_health(self.attack, -1)
