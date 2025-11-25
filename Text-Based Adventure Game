@@ -247,7 +247,7 @@ class player(character):
                 general_shop_choice = input("\nWould you like add (H)ealing, increase your (A)ttack, or (E)xit?: ").upper()
                 if general_shop_choice == "H":
                     time.sleep(0.25)
-                    print("\nYou have", self.gold, "gold. \nWould you like to heal and/or raise your maximum health for", healing_cost, "gold?")
+                    print("\nYou have", self.gold, "gold. \nWould you like to heal for", healing_cost, "gold?")
                     healing_shop_choice = input("Y/N: ").upper()
                     if healing_shop_choice == "Y":
                         if self.health == self.health_max:
@@ -278,6 +278,7 @@ class player(character):
                                 time.sleep(0.25)
                                 print("\n\nYou now have", self.gold, "gold.")
                                 self.atk_function()
+                                break
                             else:
                                 time.sleep(0.25)
                                 print("\nYou do not have the necessary amount to purchase this.")
@@ -360,7 +361,7 @@ class player(character):
 
     def random_event_cheap_potion(self):
         time.sleep(0.25)
-        print("\nYou were passing through a humble village when a small, old woman tapped you on the shoulder, offering you a cheap potion. She claims it is a potion of vitality.")
+        print("\nYou were passing through a humble village when a small, old woman tapped you on the shoulder, offering you a cheap potion. She claims it is a potion of vitality. (raises maximum health only)")
         while True:
             time.sleep(0.25)
             print("\nYou currently have", self.health, "heatlh and", self.gold, "gold.")
