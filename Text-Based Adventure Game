@@ -527,7 +527,7 @@ def game_main():
             time.sleep(3)
     if alive == False:
         time.sleep(0.25)
-        print("\nYou have failed in your mission to save the princess. You will forever got down in history as a failure!")
+        print("\nYou have failed in your mission to save the princess. You will forever go down in history as a failure!")
     else:
         time.sleep(0.25)
         print("\nCongratulations! You saved the princess from certain doom. You can now live the rest of your days in peace.")
